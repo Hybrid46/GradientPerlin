@@ -532,6 +532,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b1ff7feed8341c458ee41db6f502484, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  terrain: {fileID: 1041514365}
+  noiseSettings:
+  - {fileID: 11400000, guid: 3fe0653310718f74780bc652e67b08cc, type: 2}
+  normalize: 1
+  noiseTexture: {fileID: 0}
+  steepnessMultiplier: 10
+  steepnessExponent: 0.74
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
