@@ -9,6 +9,9 @@ public class TerrainModifier : MonoBehaviour
     public bool normalize = false;
     public float[,] heights { get; private set; }
     public Texture2D noiseTexture;
+    public float[,] steepnessMap { get; private set; }
+    public Texture2D steepnessTexture;
+    public RenderTexture terrainHeightMapTexture;
 
     [Header("Steepness for Gradient Perlin")]
     public float steepnessMultiplier = 10.0f;
@@ -16,29 +19,39 @@ public class TerrainModifier : MonoBehaviour
 
     void Start()
     {
-        float[,] heights = GenerateHeightMap(terrain.terrainData.heightmapResolution, terrain.terrainData.heightmapResolution);
+        heights = new float[terrain.terrainData.heightmapResolution, terrain.terrainData.heightmapResolution];
+        steepnessMap = new float[heights.GetLength(0), heights.GetLength(1)];
 
-        if (normalize) NormalizeHeightMap(heights);
+        GenerateHeightMap(heights.GetLength(0), heights.GetLength(1));
+
+        NormalizeHeightMap(heights);
+        NormalizeHeightMap(steepnessMap);
 
         noiseTexture = HeightMapToTexture(heights);
+        steepnessTexture = HeightMapToTexture(steepnessMap);
 
-        terrain.terrainData.SetHeights(0, 0, heights);
+        //terrain.terrainData.SetHeights(0, 0, heights);
+        terrain.terrainData.SetHeights(0, 0, steepnessMap);
+        terrainHeightMapTexture = terrain.terrainData.heightmapTexture;
+    }
+
+    private void OnDisable()
+    {
+        terrainHeightMapTexture.Release();
     }
 
     [BurstCompile]
-    private float[,] GenerateHeightMap(int width, int height)
+    private void GenerateHeightMap(int width, int height)
     {
-        float[,] heights = new float[width, height];
-
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
-                heights[x, y] = GetHeightAverage(x, y);
+                (float height, float steepness) heightSteepness = GetHeightAverage(x, y);
+                heights[x, y] = heightSteepness.height;
+                steepnessMap[x, y] = heightSteepness.steepness;
             }
         }
-
-        return heights;
     }
 
     [BurstCompile]
@@ -96,20 +109,23 @@ public class TerrainModifier : MonoBehaviour
     }
 
     [BurstCompile]
-    private float GetHeightAverage(float x, float y)
+    private (float height, float steepness) GetHeightAverage(float x, float y)
     {
-        float sumHeight = 0f;
+        float height = 0f;
+        float steepness = 0f;
 
-        foreach (NoiseSettings noiseSettings in noiseSettings)
+        foreach (NoiseSettings noiseSetting in noiseSettings)
         {
-            sumHeight += GetPerlinValue(x, y, noiseSettings);
+            (float height, float steepness) heightSteepness = GetPerlinValue(x, y, noiseSetting);
+            height += heightSteepness.height * noiseSetting.intensity;
+            steepness += heightSteepness.steepness * noiseSetting.intensity;
         }
 
-        return sumHeight / (float)noiseSettings.Count;
+        return (height, steepness);
     }
 
     [BurstCompile]
-    private float GetPerlinValue(float x, float y, NoiseSettings noiseSettings)
+    private (float height, float steepness) GetPerlinValue(float x, float y, NoiseSettings noiseSettings)
     {
         return GradientPerlin.GetGradientPerlin(x, y, noiseSettings.seedX, noiseSettings.seedY, terrain.terrainData.heightmapResolution, noiseSettings.scale, 1f, steepnessMultiplier, steepnessExponent);
     }

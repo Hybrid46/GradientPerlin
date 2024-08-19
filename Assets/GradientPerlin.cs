@@ -4,7 +4,7 @@ using UnityEngine;
 public static class GradientPerlin
 {
     [BurstCompile]
-    public static float GetGradientPerlin(float x, float y, float seedX, float seedY, float resolution, float scale, float derivationDistance = 0.001f, float steepnessMultiplier = 2f, float steepnessExponent = 2f)
+    public static (float steepness, float gradientPerlin) GetGradientPerlin(float x, float y, float seedX, float seedY, float resolution, float scale, float derivationDistance = 0.001f, float steepnessMultiplier = 2f, float steepnessExponent = 2f)
     {
         float perlin = GetPerlin(x, y, seedX, seedY, resolution, scale);
 
@@ -15,7 +15,7 @@ public static class GradientPerlin
 
         float gradientPerlin = Mathf.Lerp(perlin, 0f, steepness);
 
-        return gradientPerlin;
+        return (steepness, gradientPerlin);
     }
 
     //fastest

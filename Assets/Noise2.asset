@@ -15,3 +15,4 @@ MonoBehaviour:
   seedX: 1000
   seedY: 1000
   scale: 20
+  intensity: 0.25

@@ -535,10 +535,14 @@ MonoBehaviour:
   terrain: {fileID: 1041514365}
   noiseSettings:
   - {fileID: 11400000, guid: 3fe0653310718f74780bc652e67b08cc, type: 2}
+  - {fileID: 11400000, guid: 29ae4a9100c4dba4a90416afb4044152, type: 2}
+  - {fileID: 11400000, guid: 6f0e1ae7439d91843a86988e90f67c1c, type: 2}
   normalize: 1
   noiseTexture: {fileID: 0}
-  steepnessMultiplier: 10
-  steepnessExponent: 0.74
+  steepnessTexture: {fileID: 0}
+  terrainHeightMapTexture: {fileID: 0}
+  steepnessMultiplier: 5
+  steepnessExponent: 0.78
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
