@@ -541,8 +541,10 @@ MonoBehaviour:
   noiseTexture: {fileID: 0}
   steepnessTexture: {fileID: 0}
   terrainHeightMapTexture: {fileID: 0}
-  steepnessMultiplier: 5
-  steepnessExponent: 0.78
+  steepnessMultiplier: 10
+  steepnessExponent: 0.8
+  heightMultiplier: 1.5
+  heightAdd: -0.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

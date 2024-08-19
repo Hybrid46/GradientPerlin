@@ -17,6 +17,10 @@ public class TerrainModifier : MonoBehaviour
     public float steepnessMultiplier = 10.0f;
     public float steepnessExponent = 2.0f;
 
+    [Header("Height Modifiers")]
+    public float heightMultiplier = 1f;
+    public float heightAdd = 0f;
+
     void Start()
     {
         heights = new float[terrain.terrainData.heightmapResolution, terrain.terrainData.heightmapResolution];
@@ -24,8 +28,8 @@ public class TerrainModifier : MonoBehaviour
 
         GenerateHeightMap(heights.GetLength(0), heights.GetLength(1));
 
-        NormalizeHeightMap(heights);
-        NormalizeHeightMap(steepnessMap);
+        //NormalizeHeightMap(heights);
+        //NormalizeHeightMap(steepnessMap);
 
         noiseTexture = HeightMapToTexture(heights);
         steepnessTexture = HeightMapToTexture(steepnessMap);
@@ -48,8 +52,8 @@ public class TerrainModifier : MonoBehaviour
             for (int x = 0; x < width; x++)
             {
                 (float height, float steepness) heightSteepness = GetHeightAverage(x, y);
-                heights[x, y] = heightSteepness.height;
-                steepnessMap[x, y] = heightSteepness.steepness;
+                heights[x, y] = heightSteepness.height * heightMultiplier + heightAdd;
+                steepnessMap[x, y] = heightSteepness.steepness * heightMultiplier + heightAdd;
             }
         }
     }
@@ -113,15 +117,17 @@ public class TerrainModifier : MonoBehaviour
     {
         float height = 0f;
         float steepness = 0f;
+        float comulativeIntensity = 0f;
 
         foreach (NoiseSettings noiseSetting in noiseSettings)
         {
             (float height, float steepness) heightSteepness = GetPerlinValue(x, y, noiseSetting);
+            comulativeIntensity += noiseSetting.intensity;
             height += heightSteepness.height * noiseSetting.intensity;
             steepness += heightSteepness.steepness * noiseSetting.intensity;
         }
 
-        return (height, steepness);
+        return (height / comulativeIntensity, steepness / comulativeIntensity);
     }
 
     [BurstCompile]
