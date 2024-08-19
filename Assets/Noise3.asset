@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6200f34c877f1a4d974fc7ebc40d8c7, type: 3}
   m_Name: Noise3
   m_EditorClassIdentifier: 
-  seedX: 1000
-  seedY: 1000
+  seedX: 2000
+  seedY: 2000
   scale: 30
   intensity: 0.15
